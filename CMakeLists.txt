@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(DataChannels__)
+project(DataChannels++)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -37,8 +37,9 @@ if (NOT TARGET SctpLab::UsrSCTP)
     endif ()
 endif ()
 
-add_executable(DataChannels__ main.cpp DataStructures/MemoryPool/MemoryPool.cpp DataStructures/MemoryPool/MemoryPool.h
+add_executable(DataChannels++ main.cpp DataStructures/MemoryPool/MemoryPool.cpp DataStructures/MemoryPool/MemoryPool.h
         DataStructures/ThreadSafeMemoryPool/MemoryPool.h DataStructures/ThreadSafeMemoryPool/MemoryPool.cpp
-        DataStructures/ThreadPool/ThreadPool.h DataStructures/ThreadPool/ThreadPool.cpp)
+        DataStructures/ThreadPool/ThreadPool.h DataStructures/ThreadPool/ThreadPool.cpp DataStructures/LinkedListMemoryPool/MemoryPool.h
+        DataStructures/LinkedListMemoryPool/MemoryPool.cpp src/Peerconnection.cpp include/Peerconnection.h include/DataChannelCommon.h)
 
-target_link_libraries(DataChannels__ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY})
+target_link_libraries(DataChannels++ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY})
