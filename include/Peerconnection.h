@@ -9,12 +9,13 @@
 #include <functional>
 #include <memory>
 #include "DataChannelCommon.h"
+#include "IceTransport.h"
 
 typedef std::function<void(IceCandidate const&)> local_candidate_cb;
 
-class PeerConnection {
+class PeerConnection : std::enable_shared_from_this<std::shared_ptr<PeerConnection>> {
 public:
-
+    PeerConnection(Configuration &config);
 
 
 private:
