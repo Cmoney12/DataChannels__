@@ -12,9 +12,11 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 find_package(PkgConfig REQUIRED)
 pkg_search_module(LIBNICE REQUIRED nice)
 
-
 include_directories(${LIBNICE_INCLUDE_DIRS})
 link_directories(${LIBNICE_LIBRARY_DIRS})
+
+# spdlog
+find_package(spdlog REQUIRED)
 
 # usrsctp
 if (NOT TARGET SctpLab::UsrSCTP)
@@ -41,11 +43,12 @@ if (NOT TARGET SctpLab::UsrSCTP)
     endif ()
 endif ()
 
+
 add_executable(DataChannels++ main.cpp DataStructures/MemoryPool/MemoryPool.cpp DataStructures/MemoryPool/MemoryPool.h
         DataStructures/ThreadSafeMemoryPool/MemoryPool.h DataStructures/ThreadSafeMemoryPool/MemoryPool.cpp
         DataStructures/ThreadPool/ThreadPool.h DataStructures/ThreadPool/ThreadPool.cpp DataStructures/LinkedListMemoryPool/MemoryPool.h
         DataStructures/LinkedListMemoryPool/MemoryPool.cpp src/Peerconnection.cpp include/Peerconnection.h include/DataChannelCommon.h
         include/DTLSCertificate.h src/DTLSCertificate.cpp include/IceTransport.h src/IceTransport.cpp
-        include/DTLSTransport.h src/DTLSTranport.cpp)
+        include/DTLSTransport.h src/DTLSTranport.cpp include/Logger.h src/Logger.cpp)
 
-target_link_libraries(DataChannels++ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY})
+target_link_libraries(DataChannels++ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY} spdlog::spdlog)

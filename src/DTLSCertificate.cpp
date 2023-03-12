@@ -29,6 +29,21 @@ RTCCertificate::RTCCertificate(std::string &cert_pem, std::string &pkey_pem) {
     fingerprint_ = GenerateFingerprint(x509_);
 }
 
+
+/**
+ * This function generates an X.509 certificate using the provided RSA key pair and other inputs,
+ * such as the common name and validity period of the certificate. The certificate is returned
+ * as a shared pointer to an X509 struct. The function first creates a new X509 struct,
+ * a new serial number for the certificate, and a new name for the certificate.
+ * It then sets the public key of the certificate to the provided RSA key pair,
+ * sets the serial number and name of the certificate, sets the validity period of the certificate,
+ * and signs the certificate using the private key of the RSA key pair. If any of these steps fail,
+ * the function returns a null shared pointer instead of the generated certificate.
+ * @param evp_pkey
+ * @param common_name
+ * @param days
+ * @return
+ */
 std::shared_ptr<X509> RTCCertificate::GenerateX509(const std::shared_ptr<EVP_PKEY> &evp_pkey,
                                                    const std::string &common_name, int &days) {
 
@@ -82,6 +97,16 @@ std::shared_ptr<X509> RTCCertificate::GenerateX509(const std::shared_ptr<EVP_PKE
     return x509;
 }
 
+/**
+ *  This function generates a SHA-256 fingerprint for a given X.509 certificate.
+ *  The function takes a shared pointer to an X509 certificate as its argument. It uses the EVP_sha256()
+ *  function from the OpenSSL library to compute the SHA-256 hash of the certificate.
+ *  The resulting hash is then stored in a buffer, and this buffer is used to create a
+ *  colon-separated string representation of the fingerprint.
+ * @param x509
+ * @return fingerprint as a string.
+ */
+
 std::string RTCCertificate::GenerateFingerprint(const std::shared_ptr<X509> &x509) {
 
     unsigned int len;
@@ -108,10 +133,11 @@ std::string RTCCertificate::GenerateFingerprint(const std::shared_ptr<X509> &x50
 }
 
 /**
- * Deprecated openssl methods
+ * Generates an RTCCertificate with a specified common name and expiration date.
  * @param common_name
  * @param days
- * @return
+ * @return This returns an RTCCertificate object,
+ * which consists of the generated X.509 certificate and the RSA key pair.
  *
  **/
 RTCCertificate RTCCertificate::GenerateCertificate(const std::string& common_name, int days) {
