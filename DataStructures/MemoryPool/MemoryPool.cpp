@@ -23,7 +23,7 @@ template <typename T>
 void MemoryPool<T>::release(T* p) {
     std::unique_lock<std::mutex> lock(mtx);
     *reinterpret_cast<int*>(p) = next_free_;  // Update the released block to point to the next available block
-    next_free_ = (reinterpret_cast<char*>(p) - &pool_[0]) / sizeof(T);  // Update next_free_ to the released block
+    next_free_ = (reinterpret_cast<std::uint8_t *>(p) - &pool_[0]) / sizeof(T);  // Update next_free_ to the released block
     num_free_++;
 }
 

@@ -40,6 +40,6 @@ endif ()
 add_executable(DataChannels++ main.cpp DataStructures/MemoryPool/MemoryPool.cpp DataStructures/MemoryPool/MemoryPool.h
         DataStructures/ThreadSafeMemoryPool/MemoryPool.h DataStructures/ThreadSafeMemoryPool/MemoryPool.cpp
         DataStructures/ThreadPool/ThreadPool.h DataStructures/ThreadPool/ThreadPool.cpp DataStructures/LinkedListMemoryPool/MemoryPool.h
-        DataStructures/LinkedListMemoryPool/MemoryPool.cpp src/Peerconnection.cpp include/Peerconnection.h include/DataChannelCommon.h)
+        DataStructures/LinkedListMemoryPool/MemoryPool.cpp src/Peerconnection.cpp include/Peerconnection.h include/DataChannelCommon.h include/DTLSCertificate.h src/DTLSCertificate.cpp)
 
 target_link_libraries(DataChannels++ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY})
