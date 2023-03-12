@@ -44,11 +44,10 @@ if (NOT TARGET SctpLab::UsrSCTP)
 endif ()
 
 
-add_executable(DataChannels++ main.cpp DataStructures/MemoryPool/MemoryPool.cpp DataStructures/MemoryPool/MemoryPool.h
-        DataStructures/ThreadSafeMemoryPool/MemoryPool.h DataStructures/ThreadSafeMemoryPool/MemoryPool.cpp
+add_executable(DataChannels++ main.cpp
         DataStructures/ThreadPool/ThreadPool.h DataStructures/ThreadPool/ThreadPool.cpp DataStructures/LinkedListMemoryPool/MemoryPool.h
         DataStructures/LinkedListMemoryPool/MemoryPool.cpp src/Peerconnection.cpp include/Peerconnection.h include/DataChannelCommon.h
         include/DTLSCertificate.h src/DTLSCertificate.cpp include/IceTransport.h src/IceTransport.cpp
-        include/DTLSTransport.h src/DTLSTranport.cpp include/Logger.h src/Logger.cpp)
+        include/DTLSTransport.h src/DTLSTranport.cpp include/Logger.h src/Logger.cpp DataStructures/FixedSizeArrayMemoryPool/MemoryPool.cpp DataStructures/FixedSizeArrayMemoryPool/MemoryPool.h DataStructures/ThreadSafeMemoryPool/MemoryPool.cpp DataStructures/ThreadSafeMemoryPool/MemoryPool.h DataStructures/MemoryPoolAligned/MemoryPool.cpp DataStructures/MemoryPoolAligned/MemoryPool.h DataStructures/ComplexMemoryPool/MemoryPool.cpp DataStructures/ComplexMemoryPool/MemoryPool.h)
 
 target_link_libraries(DataChannels++ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY} spdlog::spdlog)

@@ -14,19 +14,30 @@ extern "C" {
 #include <memory>
 #include <thread>
 #include "DataChannelCommon.h"
+#include "DTLSTransport.h"
 #include "Logger.h"
+#include "../DataStructures/ThreadPool/ThreadPool.h"
 
-using candidate_callback = std::function<void(const IceCandidate &candidate)>;
+using candidate_callback = std::function<void(const std::string& string)>;
 
 class IceTransport {
 public:
-    IceTransport(Configuration& config, candidate_callback  candidate_cb);
+    IceTransport(Configuration& config,
+                 candidate_callback candidate_cb,
+                 std::shared_ptr<DTLSTransport> dtls_transport,
+                 std::shared_ptr<ThreadPool> thread_pool);
 
     ~IceTransport();
 
     void init();
 
     void log_message(const gchar *message);
+
+    void on_candidate_gathering_done();
+
+    void on_state_change(std::uint32_t stream_id, std::uint32_t component_id, std::uint32_t state);
+
+    void on_candidate(std::string& candidate);
 
 
 private:
@@ -48,9 +59,12 @@ private:
     candidate_callback candidate_callback_;
     std::unique_ptr<NiceAgent, void (*)(gpointer)> agent_;
     std::unique_ptr<GMainLoop, void (*)(GMainLoop *)> loop;
+    std::shared_ptr<DTLSTransport> dtls_transport_;
     std::uint32_t stream_id;
     std::thread main_loop_thread;
     std::shared_ptr<Logger> logger;
+    std::shared_ptr<ThreadPool> thread_pool_;
+    std::shared_ptr<MemoryPool> memory_pool_;
 };
 
 #endif //DATACHANNELS_ICETRANSPORT_H

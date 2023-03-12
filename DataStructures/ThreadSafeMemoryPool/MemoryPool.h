@@ -1,31 +1,33 @@
 //
-// Created by corey on 1/8/23.
+// Created by corey on 3/12/23.
 //
 
-#ifndef MEMORY_POOL_MEMORYPOOL_H
-#define MEMORY_POOL_MEMORYPOOL_H
+#ifndef DATACHANNELS_MEMORYPOOL_H
+#define DATACHANNELS_MEMORYPOOL_H
 
-#include <cstdlib>
-#include <vector>
+#include <cstddef>
 #include <mutex>
 
 template <typename T>
 class MemoryPool {
 public:
-    // Allocates a block of memory from the pool
+    MemoryPool(std::size_t chunkSize, std::size_t poolSize);
     T* allocate();
-
-    // Releases a block of memory back to the pool
-    void release(T* p);
-
-    // Initializes the memory pool
-    void initialize(int pool_size);
+    void deallocate(T* memory);
+    ~MemoryPool();
 
 private:
-    std::vector<std::uint8_t> pool_;  // The memory pool
-    int next_free_{};  // Index of the next available block of memory
-    int num_free_{};  // Number of available blocks of memory
-    std::mutex mutex_;  // Mutex for synchronization
+    struct MemoryBlock {
+        MemoryBlock* next;
+    };
+
+    const std::size_t chunkSize_;
+    const std::size_t poolSize_;
+    char* pool_;
+    MemoryBlock* freeList_;
+    MemoryBlock* allocatedList_;
+    std::size_t blockIndex_;
+    std::mutex mutex_;
 };
 
-#endif //MEMORY_POOL_MEMORYPOOL_H
+#endif //DATACHANNELS_MEMORYPOOL_H
