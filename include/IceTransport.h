@@ -13,10 +13,13 @@ extern "C" {
 #include <functional>
 #include <memory>
 #include <thread>
+#include <utility>
+#include <sstream>
 #include "DataChannelCommon.h"
 #include "DTLSTransport.h"
 #include "Logger.h"
 #include "../DataStructures/ThreadPool/ThreadPool.h"
+#include "../DataStructures/ThreadSafeMemoryPool/MemoryPool.h"
 
 using candidate_callback = std::function<void(const std::string& string)>;
 
@@ -38,6 +41,16 @@ public:
     void on_state_change(std::uint32_t stream_id, std::uint32_t component_id, std::uint32_t state);
 
     void on_candidate(std::string& candidate);
+
+    void parse_remote_sdp(std::string sdp);
+
+    static void replace_all(std::string &s, const std::string &search, const std::string &replace);
+
+    std::string generate_local_sdp();
+
+    void set_remote_ice_candidate(std::string& candidate);
+
+    void set_remote_ice_candidates(std::vector<std::string>& candidates);
 
 
 private:
@@ -64,7 +77,7 @@ private:
     std::thread main_loop_thread;
     std::shared_ptr<Logger> logger;
     std::shared_ptr<ThreadPool> thread_pool_;
-    std::shared_ptr<MemoryPool> memory_pool_;
+    std::shared_ptr<MemoryPool<std::uint8_t>> memory_pool_;
 };
 
 #endif //DATACHANNELS_ICETRANSPORT_H

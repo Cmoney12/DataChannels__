@@ -8,6 +8,8 @@ find_package(OpenSSL REQUIRED)
 
 include_directories(${OPENSSL_INCLUDE_DIR})
 
+find_package(spdlog)
+
 # libnice
 find_package(PkgConfig REQUIRED)
 pkg_search_module(LIBNICE REQUIRED nice)
@@ -45,9 +47,11 @@ endif ()
 
 
 add_executable(DataChannels++ main.cpp
-        DataStructures/ThreadPool/ThreadPool.h DataStructures/ThreadPool/ThreadPool.cpp DataStructures/LinkedListMemoryPool/MemoryPool.h
-        DataStructures/LinkedListMemoryPool/MemoryPool.cpp src/Peerconnection.cpp include/Peerconnection.h include/DataChannelCommon.h
+        src/Peerconnection.cpp include/Peerconnection.h include/DataChannelCommon.h
         include/DTLSCertificate.h src/DTLSCertificate.cpp include/IceTransport.h src/IceTransport.cpp
-        include/DTLSTransport.h src/DTLSTranport.cpp include/Logger.h src/Logger.cpp DataStructures/FixedSizeArrayMemoryPool/MemoryPool.cpp DataStructures/FixedSizeArrayMemoryPool/MemoryPool.h DataStructures/ThreadSafeMemoryPool/MemoryPool.cpp DataStructures/ThreadSafeMemoryPool/MemoryPool.h DataStructures/MemoryPoolAligned/MemoryPool.cpp DataStructures/MemoryPoolAligned/MemoryPool.h DataStructures/ComplexMemoryPool/MemoryPool.cpp DataStructures/ComplexMemoryPool/MemoryPool.h)
+        include/DTLSTransport.h src/DTLSTranport.cpp include/Logger.h src/Logger.cpp
+        DataStructures/ThreadPool/ThreadPool.h DataStructures/ThreadPool/ThreadPool.cpp
+        DataStructures/ThreadSafeMemoryPool/MemoryPool.h DataStructures/ThreadSafeMemoryPool/MemoryPool.cpp
+        DataStructures/MemoryPoolAligned/MemoryPool.cpp DataStructures/MemoryPoolAligned/MemoryPool.cpp DataStructures/ThreadSafeQueue/ThreadSafeQueue.h)
 
 target_link_libraries(DataChannels++ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY} spdlog::spdlog)

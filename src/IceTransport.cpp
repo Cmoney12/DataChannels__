@@ -1,6 +1,7 @@
 //
 // Created by corey on 3/11/23.
 //
+
 #include <utility>
 
 #include "../include/IceTransport.h"
@@ -22,6 +23,7 @@ void IceTransport::init() {
     g_log_set_handler(nullptr, (GLogLevelFlags)log_flags, nice_log_handler, this);
 
     loop = std::unique_ptr<GMainLoop, void (*)(GMainLoop *)>(g_main_loop_new(nullptr, FALSE), g_main_loop_unref);
+
     if (!loop) {
         SPDLOG_TRACE(logger, "Failed to initialize GMainLoop");
     }
@@ -69,17 +71,17 @@ void IceTransport::init() {
         return;
     }
 
-    nice_agent_set_stream_name(agent_.get(), this->stream_id, "application");
+    nice_agent_set_stream_name(agent_.get(), stream_id, "application");
 
     if (!config_.ice_ufrag.empty() && !config_.ice_pwd.empty()) {
-        nice_agent_set_local_credentials(agent_.get(), this->stream_id, config_.ice_ufrag.c_str(), config_.ice_pwd.c_str());
+        nice_agent_set_local_credentials(agent_.get(), stream_id, config_.ice_ufrag.c_str(), config_.ice_pwd.c_str());
     }
 
     if (config_.ice_port_range.first != 0 || config_.ice_port_range.second != 0) {
-        nice_agent_set_port_range(agent_.get(), this->stream_id, 1, config_.ice_port_range.first, config_.ice_port_range.second);
+        nice_agent_set_port_range(agent_.get(), stream_id, 1, config_.ice_port_range.first, config_.ice_port_range.second);
     }
 
-    nice_agent_attach_recv(agent_.get(), this->stream_id, 1, g_main_loop_get_context(loop.get()), data_received, this);
+    nice_agent_attach_recv(agent_.get(), stream_id, 1, g_main_loop_get_context(loop.get()), data_received, this);
 }
 
 
@@ -160,10 +162,86 @@ void IceTransport::new_selected_pair(NiceAgent *agent, guint stream_id, guint co
 
 void IceTransport::data_received(NiceAgent *agent, guint stream_id, guint component_id, guint len, gchar *buf,
                                  gpointer user_data) {
+    // TODO Data Received Callback
     auto *ice = static_cast<IceTransport*>(user_data);
     // ice->on_data_received((const uint8_t *)buf, len);
 }
 
+void IceTransport::replace_all(std::string &s, const std::string &search, const std::string &replace) {
+    size_t pos = 0;
+    while ((pos = s.find(search, pos)) != std::string::npos) {
+        s.replace(pos, search.length(), replace);
+        pos += replace.length();
+    }
+}
+
+void IceTransport::parse_remote_sdp(std::string sdp) {
+    std::string remote_sdp = std::move(sdp);
+
+    replace_all(remote_sdp, "\r\n", "\n");
+
+    int rc = nice_agent_parse_remote_sdp(this->agent_.get(), remote_sdp.c_str());
+
+    if (rc < 0) {
+        throw std::runtime_error("ParseRemoteSDP: " + std::string(strerror(rc)));
+    } else {
+        logger->info("ICE: Added {} Candidates", rc);
+    }
+
+    if (!nice_agent_gather_candidates(agent_.get(), stream_id)) {
+        throw std::runtime_error("ParseRemoteSDP: Error gathering candidates!");
+    }
+}
+
+std::string IceTransport::generate_local_sdp() {
+    std::stringstream nice_sdp;
+    std::stringstream result;
+    std::string line;
+
+    gchar *raw_sdp = nice_agent_generate_local_sdp(agent_.get());
+    nice_sdp << raw_sdp;
+
+    while (std::getline(nice_sdp, line)) {
+        if (g_str_has_prefix(line.c_str(), "a=ice-ufrag:") || g_str_has_prefix(line.c_str(), "a=ice-pwd:")) {
+            result << line << "\r\n";
+        }
+    }
+    g_free(raw_sdp);
+    return result.str();
+}
+
+void IceTransport::set_remote_ice_candidate(std::string &candidate) {
+    GSList *list = nullptr;
+    NiceCandidate *rcand = nice_agent_parse_remote_candidate_sdp(agent_.get(), stream_id, candidate.c_str());
+
+    if (rcand == nullptr) {
+        SPDLOG_TRACE(logger, "failed to parse remote candidate");
+        return;
+    }
+    list = g_slist_append(list, rcand);
+
+    bool success = (nice_agent_set_remote_candidates(agent_.get(), stream_id, 1, list) > 0);
+
+    g_slist_free_full(list, (GDestroyNotify)&nice_candidate_free);
+}
+
+void IceTransport::set_remote_ice_candidates(std::vector<std::string> &candidate_sdps) {
+    GSList *list = nullptr;
+
+    for (const auto& candidate_sdp : candidate_sdps) {
+        NiceCandidate *rcand = nice_agent_parse_remote_candidate_sdp(agent_.get(), stream_id, candidate_sdp.c_str());
+
+        if (rcand == nullptr) {
+            SPDLOG_TRACE(logger, "failed to parse remote candidate");
+            return;
+        }
+        list = g_slist_append(list, rcand);
+    }
+
+    bool success = (nice_agent_set_remote_candidates(this->agent_.get(), stream_id, 1, list) > 0);
+
+    g_slist_free_full(list, (GDestroyNotify)&nice_candidate_free);
+}
 
 
 

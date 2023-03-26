@@ -36,7 +36,6 @@ private:
     std::mutex mutex_;
 };
 
-#include "memory_pool.tpp"
 
 
 #endif //DATACHANNELS_MEMORYPOOL_H
