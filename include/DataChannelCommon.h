@@ -8,7 +8,6 @@
 #include <openssl/x509.h>
 #include <string>
 #include <vector>
-#define SHA256_FINGERPRINT_SIZE (95 + 1)
 
 struct IceCandidate {
     IceCandidate(std::string candidate, std::string sdpMid, int sdpMLineIndex)
