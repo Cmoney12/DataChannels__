@@ -111,7 +111,7 @@ void IceTransport::component_state_changed(NiceAgent *agent, guint stream_id, gu
     ice->on_state_change(stream_id, component_id, state);
 }
 
-void IceTransport::on_state_change(std::uint32_t stream_id, std::uint32_t component_id, std::uint32_t state) {
+void IceTransport::on_state_change(std::uint32_t stream_id_, std::uint32_t component_id, std::uint32_t state) {
     switch (state) {
         case (NICE_COMPONENT_STATE_DISCONNECTED):
             SPDLOG_TRACE(logger, "ICE: DISCONNECTED");
@@ -242,6 +242,14 @@ void IceTransport::set_remote_ice_candidates(std::vector<std::string> &candidate
 
     g_slist_free_full(list, (GDestroyNotify)&nice_candidate_free);
 }
+
+bool IceTransport::send(std::uint8_t *data, std::size_t size) {
+    int result = 0;
+    result = nice_agent_send(agent_.get(), stream_id, 1, size, reinterpret_cast<const char*>(data));
+    // probebly should add a message if succeed
+    return result;
+}
+
 
 
 

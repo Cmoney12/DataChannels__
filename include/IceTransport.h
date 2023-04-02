@@ -38,7 +38,7 @@ public:
 
     void on_candidate_gathering_done();
 
-    void on_state_change(std::uint32_t stream_id, std::uint32_t component_id, std::uint32_t state);
+    void on_state_change(std::uint32_t stream_id_, std::uint32_t component_id, std::uint32_t state);
 
     void on_candidate(std::string& candidate);
 
@@ -51,6 +51,8 @@ public:
     void set_remote_ice_candidate(std::string& candidate);
 
     void set_remote_ice_candidates(std::vector<std::string>& candidates);
+
+    bool send(std::uint8_t *data, std::size_t size);
 
 
 private:
@@ -77,7 +79,7 @@ private:
     std::thread main_loop_thread;
     std::shared_ptr<Logger> logger;
     std::shared_ptr<ThreadPool> thread_pool_;
-    std::shared_ptr<MemoryPool<std::uint8_t>> memory_pool_;
+    std::shared_ptr<MemoryPool<std::uint8_t*>> memory_pool_;
 };
 
 #endif //DATACHANNELS_ICETRANSPORT_H
