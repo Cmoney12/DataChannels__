@@ -43,7 +43,7 @@ void IceTransport::init() {
         throw std::invalid_argument("Only up to one ICE server is currently supported");
     }
 
-    for (auto ice_server : config_.ice_servers) {
+    for (const auto& ice_server : config_.ice_servers) {
         struct hostent *stun_host = gethostbyname(ice_server.hostname.c_str());
         if (stun_host == nullptr) {
             logger->warn("Failed to lookup host for server: {}", ice_server.hostname);
@@ -74,7 +74,7 @@ void IceTransport::init() {
     nice_agent_set_stream_name(agent_.get(), stream_id, "application");
 
     if (!config_.ice_ufrag.empty() && !config_.ice_pwd.empty()) {
-        nice_agent_set_local_credentials(agent_.get(), stream_id, config_.ice_ufrag.c_str(), config_.ice_pwd.c_str());
+        //nice_agent_set_local_credentials(agent_.get(), this->stream_id, config_.ice_ufrag.c_str(), config_.ice_pwd.c_str());
     }
 
     if (config_.ice_port_range.first != 0 || config_.ice_port_range.second != 0) {
@@ -164,7 +164,7 @@ void IceTransport::data_received(NiceAgent *agent, guint stream_id, guint compon
                                  gpointer user_data) {
     // TODO Data Received Callback
     auto *ice = static_cast<IceTransport*>(user_data);
-    // ice->on_data_received((const uint8_t *)buf, len);
+    //ice->on_data_received((const uint8_t *)buf, len);
 }
 
 void IceTransport::replace_all(std::string &s, const std::string &search, const std::string &replace) {
@@ -246,11 +246,7 @@ void IceTransport::set_remote_ice_candidates(std::vector<std::string> &candidate
 bool IceTransport::send(std::uint8_t *data, std::size_t size) {
     int result = 0;
     result = nice_agent_send(agent_.get(), stream_id, 1, size, reinterpret_cast<const char*>(data));
-    // probebly should add a message if succeed
+    // probably should add a message if succeed
     return result;
 }
-
-
-
-
 

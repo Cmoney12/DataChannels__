@@ -7,9 +7,11 @@
 
 
 extern "C" {
-#include <agent.h>
-#include <netdb.h>
+    #include <agent.h>
+    #include <netdb.h>
+    #include <nice.h>
 };
+
 #include <functional>
 #include <memory>
 #include <thread>
@@ -20,6 +22,7 @@ extern "C" {
 #include "Logger.h"
 #include "../DataStructures/ThreadPool/ThreadPool.h"
 #include "../DataStructures/ThreadSafeMemoryPool/MemoryPool.h"
+#include "DataPacket.h"
 
 using candidate_callback = std::function<void(const std::string& string)>;
 
