@@ -52,8 +52,10 @@ add_executable(DataChannels++ main.cpp
         include/DTLSTransport.h src/DTLSTranport.cpp include/Logger.h src/Logger.cpp
         DataStructures/ThreadPool/ThreadPool.h DataStructures/ThreadPool/ThreadPool.cpp
         DataStructures/ThreadSafeMemoryPool/MemoryPool.h DataStructures/ThreadSafeMemoryPool/MemoryPool.cpp
-        DataStructures/MemoryPoolAligned/MemoryPool.cpp DataStructures/MemoryPoolAligned/MemoryPool.cpp DataStructures/ThreadSafeQueue/ThreadSafeQueue.h
+        DataStructures/MemoryPoolAligned/MemoryPool.cpp DataStructures/MemoryPoolAligned/MemoryPool.cpp
+        DataStructures/ThreadSafeQueue/ThreadSafeQueue.h
         include/DataPacket.h
-        include/CircularBuffer.h)
+        include/Chunk.h
+)
 
 target_link_libraries(DataChannels++ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY} spdlog::spdlog)
