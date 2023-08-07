@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <memory>
 
 template <typename T>
 class Chunk {
@@ -32,5 +33,8 @@ public:
 private:
     std::vector<T> data;
 };
+
+template <typename T>
+using ChunkPtr = std::shared_ptr<Chunk<T>>;
 
 #endif //DATACHANNELS_CHUNK_H
