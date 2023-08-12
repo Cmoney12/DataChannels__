@@ -56,6 +56,7 @@ add_executable(DataChannels++ main.cpp
         DataStructures/ThreadSafeQueue/ThreadSafeQueue.h
         include/DataPacket.h
         include/Chunk.h
+        include/common.h
 )
 
 target_link_libraries(DataChannels++ ${OPENSSL_LIBRARIES} ${LIBNICE_LIBRARIES}  ${USRSCTP_LIBRARY} spdlog::spdlog)

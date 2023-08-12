@@ -10,7 +10,7 @@
 #include <memory>
 
 template <typename T>
-class Chunk {
+struct Chunk {
 public:
     // Constructor with size
     explicit Chunk(std::size_t dataSize) : data(dataSize) {}

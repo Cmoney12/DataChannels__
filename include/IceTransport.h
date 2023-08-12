@@ -21,13 +21,15 @@ extern "C" {
 #include "DTLSTransport.h"
 #include "Logger.h"
 #include "../DataStructures/ThreadPool/ThreadPool.h"
-#include "../DataStructures/ThreadSafeMemoryPool/MemoryPool.h"
-#include "DataPacket.h"
+#include "Chunk.h"
 
 using candidate_callback = std::function<void(const std::string& string)>;
 
 class IceTransport {
 public:
+    enum class GatheringState { New = 0, InProgress = 1, Complete = 2 };
+    enum class State { Disconnected, Connecting, Connected, Completed, Failed };
+
     IceTransport(Configuration& config,
                  candidate_callback candidate_cb,
                  std::shared_ptr<DTLSTransport> dtls_transport,
@@ -82,7 +84,6 @@ private:
     std::thread main_loop_thread;
     std::shared_ptr<Logger> logger;
     std::shared_ptr<ThreadPool> thread_pool_;
-    std::shared_ptr<MemoryPool<std::uint8_t*>> memory_pool_;
 };
 
 #endif //DATACHANNELS_ICETRANSPORT_H
