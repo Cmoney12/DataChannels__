@@ -12,6 +12,9 @@
 template <typename T>
 class Chunk {
 public:
+    // Constructor with size
+    explicit Chunk(std::size_t dataSize) : data(dataSize) {}
+
     // Constructor with move semantics
     Chunk(const T *dataToCopy, std::size_t dataLen) : data(dataToCopy, dataToCopy + dataLen) {}
 
@@ -28,7 +31,7 @@ public:
 
     [[nodiscard]] std::size_t Size() const { return data.size(); }
     [[nodiscard]] std::size_t Length() const { return Size(); }
-    const T *Data() const { return data.data(); }
+    T *Data()  { return data.data(); }
 
 private:
     std::vector<T> data;
